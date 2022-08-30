@@ -1,3 +1,19 @@
 import 'package:flutter/material.dart';
 
-//야호
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('어유 힘들어'),
+      ),
+    );
+  }
+}
