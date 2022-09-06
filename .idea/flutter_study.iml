@@ -27,6 +27,24 @@
       <excludeFolder url="file://$MODULE_DIR$/random/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/random/build" />
       <excludeFolder url="file://$MODULE_DIR$/random/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/image_picker_ios/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/example/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/example/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vodio_player/ios/.symlinks/plugins/video_player_avfoundation/example/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/chool_check/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/chool_check/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/chool_check/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
