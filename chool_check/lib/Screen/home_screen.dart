@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -12,7 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool choolcheckdone =  false; //출근여부확인
+  bool choolcheckdone = false; //출근여부확인
+  GoogleMapController? mapController;
 
   //latitude -위도, longitude-경도
   //위치 기능
@@ -23,34 +22,47 @@ class _HomeScreenState extends State<HomeScreen> {
   static final double okdistance = 100;
   static final Circle withinDistanceCircle = Circle(
     circleId:
-        CircleId('withinDistanceCircle'), //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+    CircleId('withinDistanceCircle'),
+    //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
     center: companyLatlng,
-    fillColor: Colors.blue.withOpacity(0.5), //색채우기
-    radius: okdistance, //반지름, 반경
-    strokeColor: Colors.blue.withOpacity(0.5), //테두리둘레색
+    fillColor: Colors.blue.withOpacity(0.5),
+    //색채우기
+    radius: okdistance,
+    //반지름, 반경
+    strokeColor: Colors.blue.withOpacity(0.5),
+    //테두리둘레색
     strokeWidth: 1,
   );
   static final Circle notwithinDistanceCircle = Circle(
     circleId:
-        CircleId('notwithinDistanceCircle'), //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+    CircleId('notwithinDistanceCircle'),
+    //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
     center: companyLatlng,
-    fillColor: Colors.red.withOpacity(0.5), //색채우기
-    radius: okdistance, //반지름, 반경
-    strokeColor: Colors.red.withOpacity(0.5), //테두리둘레색
+    fillColor: Colors.red.withOpacity(0.5),
+    //색채우기
+    radius: okdistance,
+    //반지름, 반경
+    strokeColor: Colors.red.withOpacity(0.5),
+    //테두리둘레색
     strokeWidth: 1,
   );
   static final Circle checkDoneCircle = Circle(
-    circleId: CircleId('checkDoneCircle'), //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+    circleId: CircleId('checkDoneCircle'),
+    //여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
     center: companyLatlng,
-    fillColor: Colors.green.withOpacity(0.5), //색채우기
-    radius: okdistance, //반지름, 반경
-    strokeColor: Colors.green.withOpacity(0.5), //테두리둘레색
+    fillColor: Colors.green.withOpacity(0.5),
+    //색채우기
+    radius: okdistance,
+    //반지름, 반경
+    strokeColor: Colors.green.withOpacity(0.5),
+    //테두리둘레색
     strokeWidth: 1,
   );
   static final Marker marker = Marker(
     markerId: MarkerId('marker'),
     position: companyLatlng,
   );
+
   //줌 레벨(확대된 정도)설정, 초기위치.설정
   static final CameraPosition initionlposition = CameraPosition(
     target: companyLatlng,
@@ -94,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Column(
                       children: [
                         _CustomGoogleMap(
+                          onmapcreated: onMapCreated,
                           marker: marker,
                           circle: choolcheckdone ?
                           checkDoneCircle :
@@ -110,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     );
                   }
-                  );
+              );
             }
             return Center(
               child: Text(snapshot.data),
@@ -120,22 +133,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  onChoolCheckPressed() async{
+  onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+
+  onChoolCheckPressed() async {
     final result = await showDialog(
         context: context,
-        builder: (BuildContext context){
+        builder: (BuildContext context) {
           return AlertDialog( //팝업창같은 다이어로그를 쉽게 띄워주는 기능
             title: Text("출근하기"),
             content: Text("출근을 하시겠습니까?"),
             actions: [
               TextButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop(false);
                 },
                 child: Text("취소"),
               ),
               TextButton(
-                onPressed: (){
+                onPressed: () {
                   Navigator.of(context).pop(true);
                 },
                 child: Text("출근하기"),
@@ -144,12 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
     );
-    if(result){
-      setState((){
+    if (result) {
+      setState(() {
         choolcheckdone = true;
       });
     }
   }
+
 // 권한과 관련된 모든 값은 미래의 값을 받아오는 async로 작업
   Future<String> checkPermission() async {
     //권한을 사용할 수 있는지를 확인
@@ -173,28 +192,52 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     return '위치 권한이 허가되었습니다.';
   }
-}
 
-AppBar renderAppBar() {
-  return AppBar(
-    //타이틀
-    title: Text(
-      '나의 맥북 안녕',
-      style: TextStyle(
-        color: Colors.blue,
-        fontWeight: FontWeight.w700,
+
+  AppBar renderAppBar() {
+    return AppBar(
+      //타이틀
+      title: Text(
+        '나의 맥북 안녕',
+        style: TextStyle(
+          color: Colors.blue,
+          fontWeight: FontWeight.w700,
+        ),
       ),
-    ),
-    backgroundColor: Colors.white,
-  );
+      backgroundColor: Colors.white,
+      actions: [
+        IconButton(
+          onPressed: () async{
+            if (mapController == null) {
+              return;
+            }
+            final location = await Geolocator.getCurrentPosition();
+            mapController!.animateCamera(
+                CameraUpdate.newLatLng(
+                  LatLng(
+                  location.latitude,
+                  location.longitude,
+                ),
+              ),
+            );
+          },
+          color: Colors.blue,
+          icon: Icon(
+            Icons.my_location,
+          ),
+        ),
+      ],
+    );
+  }
 }
-
 class _CustomGoogleMap extends StatelessWidget {
   final CameraPosition initialPostion;
   final Circle circle;
   final Marker marker;
+  final MapCreatedCallback onmapcreated;
   const _CustomGoogleMap(
       {required this.initialPostion,
+        required this.onmapcreated,
       required this.circle,
       required this.marker,
       Key? key})
@@ -211,6 +254,7 @@ class _CustomGoogleMap extends StatelessWidget {
         mapType: MapType.normal, //맵타입형식 위성지도 등등 설정 가능
         circles: Set.from([circle]),
         markers: Set.from([marker]),
+        onMapCreated: onmapcreated,
       ),
     );
   }
