@@ -16,6 +16,35 @@ class _HomeScreenState extends State<HomeScreen> {
       37.5233273,
       126.921252,
   );
+  static final double distance = 100;
+  static final Circle withinDistanceCircle = Circle(
+      circleId: CircleId('withinDistanceCircle'),//여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+      center: companyLatlng,
+    fillColor: Colors.blue.withOpacity(0.5), //색채우기
+    radius: distance,//반지름, 반경
+    strokeColor:Colors.blue.withOpacity(0.5), //테두리둘레색
+    strokeWidth: 1,
+  );
+  static final Circle notwithinDistanceCircle = Circle(
+    circleId: CircleId('notwithinDistanceCircle'),//여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+    center: companyLatlng,
+    fillColor: Colors.red.withOpacity(0.5), //색채우기
+    radius: distance,//반지름, 반경
+    strokeColor:Colors.red.withOpacity(0.5), //테두리둘레색
+    strokeWidth: 1,
+  );
+  static final Circle checkDoneCircle = Circle(
+    circleId: CircleId('checkDoneCircle'),//여러개의 동그라미를 그렸을 때의 동그라미를 구분하는 데 사용
+    center: companyLatlng,
+    fillColor: Colors.green.withOpacity(0.5), //색채우기
+    radius: distance,//반지름, 반경
+    strokeColor:Colors.green.withOpacity(0.5), //테두리둘레색
+    strokeWidth: 1,
+  );
+  static final Marker marker = Marker(
+      markerId: MarkerId('marker'),
+      position: companyLatlng,
+  );
   //줌 레벨(확대된 정도)설정, 초기위치.설정
   static final CameraPosition initionlposition = CameraPosition(
       target: companyLatlng,
@@ -26,13 +55,29 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:renderAppBar(),
-      body:Column(
-        children: [
-          _CustomGoogleMap(
-              initialPostion: initionlposition
-          ),
-          _ChoolCheckButton(),
-        ],
+      body:FutureBuilder(
+        future: checkPermission(),
+        builder: (BuildContext context, AsyncSnapshot snapshot){
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if(snapshot.data == '위치 권한이 허가되었습니다.') {
+            return Column(
+              children: [
+                _CustomGoogleMap(
+                  marker: marker,
+                  circle: withinDistanceCircle,
+                  initialPostion: initionlposition,
+                ),
+                _ChoolCheckButton(),
+              ],
+            );
+          }
+          return Center(
+            child: Text(snapshot.data),
+          );
+        },
       )
     );
   }
@@ -57,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (checkPermission == LocationPermission.deniedForever) {
         return '앱의 위치 권한을 셋팅에서 허가해주세요';
       }
-      return '위치 권한을 허가되었습니다.';
+      return '위치 권한이 허가되었습니다.';
     }
   }
 
@@ -77,7 +122,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class _CustomGoogleMap extends StatelessWidget {
   final CameraPosition initialPostion;
+  final Circle circle;
+  final Marker marker;
   const _CustomGoogleMap({required this.initialPostion,
+    required this.circle,
+    required this.marker,
   Key? key}) : super(key: key);
 
   @override
@@ -86,7 +135,11 @@ class _CustomGoogleMap extends StatelessWidget {
       flex: 3,
       child: GoogleMap(
         initialCameraPosition: initialPostion, //초기 카메라 위치
+        myLocationEnabled: true, //내위치표시
+        myLocationButtonEnabled: false, //내위치로가기버튼(커스텀할 예정)
         mapType: MapType.normal, //맵타입형식 위성지도 등등 설정 가능
+        circles: Set.from([circle]),
+        markers: Set.from([marker]),
       ),
     );
   }
@@ -98,7 +151,7 @@ class _ChoolCheckButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Text('출근'),
+      child: Text('출'),
     );
   }
 }
