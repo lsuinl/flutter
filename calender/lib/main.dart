@@ -10,7 +10,7 @@ void main() async{
 
   runApp(
     MaterialApp(
-      theme: ThemeData(
+      theme: ThemeData( //폰트테마설정
         fontFamily: 'NotoSans',
       ),
       home: HomeScreen(),

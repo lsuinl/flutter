@@ -1,4 +1,5 @@
 import 'package:calender/Screen/component/calender.dart';
+import 'package:calender/Screen/component/schedule_card.dart';
 import 'package:calender/Screen/component/today_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -11,12 +12,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DateTime selectedDay=DateTime(
+  DateTime selectedDay=DateTime( //선택날짜(null!이기 위해 now로 우선지정
     DateTime.now().year,
     DateTime.now().month,
     DateTime.now().day,
   );
-  DateTime focuseDay=DateTime.now();
+  DateTime focuseDay=DateTime.now(); //선택날짜
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,17 @@ class _HomeScreenState extends State<HomeScreen> {
             SizedBox(height: 8,),
             TodayBanner(
                 scheduleCount:3,
-                selectDay: selectedDay,)
+                selectDay: selectedDay,),
+            SizedBox(height: 8,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: ScheduleCard(
+                  startTime: 12,
+                  endTime: 14,
+                  content: '프로그래밍 공부하기',
+                  color:Colors.red,
+              ),
+            ),
           ],
         ),
       )
