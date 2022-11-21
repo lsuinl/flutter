@@ -1,6 +1,10 @@
 import 'package:calender/Screen/component/customtext_field.dart';
 import 'package:calender/const/colors.dart';
+import 'package:calender/database/drift_database.dart';
+import 'package:calender/model/category_color.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:calender/database/drift_database.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({Key? key}) : super(key: key);
@@ -53,7 +57,14 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       },
                     ),
                     SizedBox(height: 16,),
-                    _ColorPicker(),
+                    FutureBuilder<List<CategoryColor>>(
+                      future: GetIt.I<LocalDatabase>().getCategoryColors(),
+                      builder: (context, snapshot) {
+                        return _ColorPicker(colors:snapshot.hasData ?
+                            snapshot.data!.map((e) => Color(int.parse('FF${e.hexCode}', radix: 16))).toList()
+                            : [],);
+                      }
+                    ),
                     SizedBox(height: 8,),
                     _SaveButton(onPressed: onSavePressed,)
                   ],
@@ -122,23 +133,18 @@ class _content extends StatelessWidget {
 }
 
 class _ColorPicker extends StatelessWidget {
-  const _ColorPicker({Key? key}) : super(key: key);
+  final List<Color> colors;
+
+  const _ColorPicker({
+    required this.colors,
+    Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Wrap( //자동줄바꿈을 지원해주는 Row같은 위젯
       spacing: 8, //각각의 childern사이의 간격 지정(가로로)
       runSpacing: 0, //위아래 children간격지정
-      children: [
-        renderColor(Colors.red),
-        renderColor(Colors.orange),
-        renderColor(Colors.yellow),
-        renderColor(Colors.green),
-        renderColor(Colors.blue),
-        renderColor(Colors.indigo),
-        renderColor(Colors.purple),
-      ],
-    );
+      children: colors.map((e) => renderColor(e)).toList(),);
   }
 
   Widget renderColor(Color color){

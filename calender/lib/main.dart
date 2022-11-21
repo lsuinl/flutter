@@ -2,6 +2,7 @@ import 'package:calender/Screen/component/calender.dart';
 import 'package:calender/database/drift_database.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/date_symbol_data_local.dart';//언어설정
 import 'Screen/home_screen.dart';
 
@@ -16,7 +17,7 @@ void main() async{
   await initializeDateFormatting(); //초기화(언어설정이 가능하도록)
 
   final database = LocalDatabase(); //데이터베이스 생성
-
+  GetIt.I.registerSingleton<LocalDatabase>(database);//파라미터로 값을 가져와주지 않아도 database값을 어디서든 가져올 수 있도록 해줘요
   final colors= await database.getCategoryColors(); //색 가져오기
   if(colors.isEmpty){//데이터베이스에 이미 값이 저장되어있는지 확인
     for(String hexCode in DEFAULT_COLORS){ //색 넣어주기
