@@ -1,3 +1,0 @@
-const APP_ID = 'f1f02fa11fcf43419aab4696b7f94a7a';
-const CHANNEL_NAME='testchannel';
-const TEMP_TOKEN='007eJxTYNgy3/kvh4ruglRZjc9B17iqFi5VjD+myFav9WOay601mScVGNIM0wyM0hINDdOS00yMTQwtExOTTMwszZLM0yxNEs0TAxbGJzcEMjL0vfzLzMgAgSA+N0NJanFJckZiXl5qDgMDAAgwIpA=';
