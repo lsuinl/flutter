@@ -19,6 +19,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   int? startTime;
   int? endTime;
   String? content;
+  int? selectedColorId;
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +61,20 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     FutureBuilder<List<CategoryColor>>(
                       future: GetIt.I<LocalDatabase>().getCategoryColors(),
                       builder: (context, snapshot) {
-                        return _ColorPicker(colors:snapshot.hasData ?
-                            snapshot.data!.map((e) => Color(int.parse('FF${e.hexCode}', radix: 16))).toList()
+                        if(snapshot.hasData &&
+                            selectedColorId==null
+                            &&snapshot.data!.isNotEmpty){
+                          selectedColorId=snapshot.data![0].id;
+                        }
+                        return _ColorPicker(
+                          selectedColorId: selectedColorId!,
+                          colorIdSetter: (int id){
+                            setState(() {
+                              selectedColorId=id;
+                            });
+                          },
+                          colors:snapshot.hasData ?
+                            snapshot.data!
                             : [],);
                       }
                     ),
@@ -132,11 +145,17 @@ class _content extends StatelessWidget {
   }
 }
 
+typedef ColorIdSetter =void Function(int id);
+
 class _ColorPicker extends StatelessWidget {
-  final List<Color> colors;
+  final List<CategoryColor> colors;
+  final int selectedColorId;
+  final ColorIdSetter colorIdSetter;
 
   const _ColorPicker({
     required this.colors,
+    required this.selectedColorId,
+    required this.colorIdSetter,
     Key? key}) : super(key: key);
 
   @override
@@ -144,14 +163,23 @@ class _ColorPicker extends StatelessWidget {
     return Wrap( //자동줄바꿈을 지원해주는 Row같은 위젯
       spacing: 8, //각각의 childern사이의 간격 지정(가로로)
       runSpacing: 0, //위아래 children간격지정
-      children: colors.map((e) => renderColor(e)).toList(),);
+      children: colors.map(
+            (e) => GestureDetector(
+              onTap: (){
+                colorIdSetter(e.id);
+              },
+              child: renderColor(e,selectedColorId==e.id),
+            ),
+    ).toList(),
+    ); //선택체크
   }
 
-  Widget renderColor(Color color){
+  Widget renderColor(CategoryColor color, bool isSelected){
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: color,
+        color: Color(int.parse('${color.hexCode}', radix: 16)),
+        border: isSelected? Border.all(color: Colors.black, width: 4):null //선택되었을 떄 실행
       ),
       width: 32,
       height: 32,
