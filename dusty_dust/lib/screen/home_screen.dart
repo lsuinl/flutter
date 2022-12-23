@@ -1,7 +1,7 @@
 import 'package:dusty_dust/component/category_card.dart';
+import 'package:dusty_dust/component/hourlycard.dart';
 import 'package:dusty_dust/component/main_app_bar.dart';
 import 'package:dusty_dust/component/main_drawer.dart';
-import 'package:dusty_dust/component/main_stat.dart';
 import 'package:dusty_dust/const/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -19,11 +19,18 @@ class HomeScreen extends StatelessWidget {
           slivers: [
             MainAppBar(),
             SliverToBoxAdapter( //슬리버가 아닌 위젯도 넣을 수 있도록
-              child:CategoryCard()
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  CategoryCard(),
+                  const SizedBox(height: 16,),
+                      HourlyCard()
+                ],
+                  ),
+            ),
+                ],
+              ),
             )
-          ],
-        ),
-      ),
-    );
+        );
   }
 }
