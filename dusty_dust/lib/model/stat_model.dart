@@ -56,7 +56,7 @@ class StatModel{
   gyeongnam=double.parse(json['gyeongnam']?? '0'),
   gyeonggi=double.parse(json['gyeonggi']?? '0'),
   dataTime=DateTime.parse(json['dataTime']?? '0'),
-  itemCode= parseItemCode(json['itemCode']?? '0');
+  itemCode= parseItemCode(json['itemCode']);
 
   static ItemCode parseItemCode(String raw){
     if(raw=='PM2.5'){
