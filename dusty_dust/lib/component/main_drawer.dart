@@ -29,25 +29,31 @@ class MainDrawer extends StatelessWidget {
       backgroundColor: dartColor,
       child: ListView(
         children: [
-          DrawerHeader( //드로우헤더
+          DrawerHeader(
+              //드로우헤더
               child: Text("지역 선택",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ))),
+          ...regions
+              .map(
+                (e) => ListTile(
+                  //... 리스트속에 리스트넣게해주기중요한 개념!
+                  tileColor: Colors.white,
+                  selectedTileColor: lightColor,
+                  //선택된 상태에서 배경
+                  selectedColor: Colors.black,
+                  //글자
+                  selected: e == '서울',
+                  //위에서 작성한 셀렉티드 컬러 속성들 사용여부(기본:흰색)
+                  onTap: () {},
+                  title: Text(
+                    e,
+                  ),
+                ),
               )
-              )
-          ),
-         ...regions.map((e) =>  ListTile( //... 리스트속에 리스트넣게해주기중요한 개념!
-             tileColor: Colors.white,
-             selectedTileColor: lightColor, //선택된 상태에서 배경
-             selectedColor: Colors.black,//글자
-             selected: e=='서울', //위에서 작성한 셀렉티드 컬러 속성들 사용여부(기본:흰색)
-             onTap: (){},
-             title: Text(
-               e,
-             ),
-         ),
-         ).toList()
+              .toList()
         ],
       ), //리스트뷰!
     );
