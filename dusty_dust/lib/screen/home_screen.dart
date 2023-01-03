@@ -11,6 +11,8 @@ import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
+import '../const/regions.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -19,20 +21,38 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
+  String region = regions[0]; //기본은 0번째 지역먼저.
   //dio로 api데이터요청하기
-  Future<List<StatModel>> fetchData() async {
-    final statModels = await StatRepository.fetchData();
-    return statModels;
+  Future<Map<ItemCode, List<StatModel>>> fetchData() async {
+    Map<ItemCode, List<StatModel>> stats={};
+
+    for(ItemCode itemCode in ItemCode.values) { //데이터 하나씩 전부 불러와주기
+      final statModels = await StatRepository.fetchData(
+          itemCode: itemCode
+      );
+
+      stats.addAll({
+        itemCode: statModels,
+      });
+    }
+    return stats;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: primaryColor,
-        drawer: MainDrawer(),
+        drawer: MainDrawer(
+          selectedRegion: region,
+          onRegionTap: (String region){
+            setState(() {
+              this.region=region;
+            });
+            Navigator.of(context).pop(); //뒤로가기. drawer도 하나의 화면으로 인식.
+          },
+        ),
         body: Center(
-          child: FutureBuilder<List<StatModel>>(
+          child: FutureBuilder<Map<ItemCode,List<StatModel>>>(
             future: fetchData(),
             builder: (context, snapshot) {
               if(snapshot.hasError){
@@ -46,10 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              List<StatModel> stats = snapshot.data!; //통계데이터 받아오기.
-              StatModel recentStat= stats[0]; //리스트의 가장 앞에있는 데이터가 가장 최근 데이터임(날ㅅ짜)
+              Map<ItemCode,List<StatModel>> stats = snapshot.data!; //통계데이터 받아오기.
+              StatModel pm10RecentStat= stats[ItemCode.PM10]![0];
+              //리스트의 가장 앞에있는 데이터가 가장 최근 데이터임(날ㅅ짜)
               final status = DataUtils.getCurrentStatusFromStat(
-                  value: recentStat.seoul,
+                  value: pm10RecentStat.seoul,
                   itemCode: ItemCode.PM10
               );
 
@@ -57,8 +78,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 //스크롤뷰
                 slivers: [
                   MainAppBar(
+                    region: region,
                     status: status,
-                    stat: recentStat,
+                    stat: pm10RecentStat,
                   ),
                   SliverToBoxAdapter(
                     //슬리버가 아닌 위젯도 넣을 수 있도록

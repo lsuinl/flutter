@@ -7,8 +7,13 @@ import 'package:flutter/material.dart';
 class MainAppBar extends StatelessWidget {
   final StatusModel status; // 가져온 스탯모델을 기준으로 단계를 나눠 만든 모델
   final StatModel stat; //실제 값 모델(요청해서 받아온 값)
+  final String region;
 
-  const MainAppBar({required this.status, required this.stat, Key? key})
+  const MainAppBar({
+    required this.status,
+    required this.stat,
+    required this.region,
+    Key? key})
       : super(key: key);
 
   @override
@@ -32,7 +37,7 @@ class MainAppBar extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  '서울',
+                  region,
                   style: ts.copyWith(
                     fontSize: 40,
                     fontWeight: FontWeight.w700,

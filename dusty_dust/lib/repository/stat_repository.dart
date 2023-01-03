@@ -4,13 +4,15 @@ import '../const/data.dart';
 
 class StatRepository {
   //static로 선언하면 ()안붙여도 됩니다
-  static Future<List<StatModel>> fetchData() async {
+  static Future<List<StatModel>> fetchData({
+  required ItemCode itemCode,
+}) async {
     final response = await Dio().get(
       'http://apis.data.go.kr/B552584/ArpltnStatsSvc/getCtprvnMesureLIst',
       queryParameters: {
         'serviceKey': serviceKey,
         'returnType': 'json',
-        'itemCode': 'PM10',
+        'itemCode':  itemCode.name,
         'numOfRows': 30,
         'pageNo': 1,
         'dataGubun': 'HOUR',
