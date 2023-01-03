@@ -1,8 +1,14 @@
 import 'package:dusty_dust/const/colors.dart';
+import 'package:dusty_dust/model/stat_model.dart';
+import 'package:dusty_dust/model/status_model.dart';
 import 'package:flutter/material.dart';
 
 class MainAppBar extends StatelessWidget {
-  const MainAppBar({Key? key}) : super(key: key);
+  final StatusModel status; // 가져온 스탯모델을 기준으로 단계를 나눠 만든 모델
+  final StatModel stat; //실제 값 모델(요청해서 받아온 값)
+
+  const MainAppBar({required this.status, required this.stat, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +19,7 @@ class MainAppBar extends StatelessWidget {
 
     return SliverAppBar(
       //앱바
-      backgroundColor: primaryColor,
+      backgroundColor: status.primaryColor,
       expandedHeight: 500, //최대 늘어날 수 있는 값 설정
       flexibleSpace: FlexibleSpaceBar(
         //스크롤을 올리면 아이콘이 사라지는 공간
@@ -32,24 +38,24 @@ class MainAppBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  DateTime.now().toString(),
+                  getTimeFromDateTime(dateTime: stat.dataTime),
                   style: ts.copyWith(
                     fontSize: 20,
                   ),
                 ),
                 const SizedBox(height: 20.0),
                 Image.asset(
-                  'asset/img/mediocre.png',
+                  status.imagePtth,
                   //미디어쿼리:현재 기기의. of(context)콘텐츠를 구성하는 size.width가로 사이즈의 /2 절반
                   width: MediaQuery.of(context).size.width / 2,
                 ),
-                Text('보통',
+                Text(status.label,
                     style: ts.copyWith(
                         fontSize: 40.0, fontWeight: FontWeight.w700)),
                 const SizedBox(
                   height: 8.0,
                 ),
-                Text('나쁘지 않네요',
+                Text(status.comment,
                     style: ts.copyWith(
                         fontSize: 20.0, fontWeight: FontWeight.w700)),
               ],
@@ -58,5 +64,13 @@ class MainAppBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getTimeFromDateTime({required DateTime dateTime}) {
+    return '${dateTime.year}-${dateTime.month}-${dateTime.day} ${getTimeFormat(dateTime.hour)}:${getTimeFormat(dateTime.minute)}';
+  }
+
+  String getTimeFormat(int number) {
+    return number.toString().padLeft(2, '0');
   }
 }

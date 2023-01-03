@@ -5,6 +5,7 @@ import 'package:dusty_dust/component/main_app_bar.dart';
 import 'package:dusty_dust/component/main_drawer.dart';
 import 'package:dusty_dust/const/colors.dart';
 import 'package:dusty_dust/const/data.dart';
+import 'package:dusty_dust/const/status_level.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/repository/stat_repository.dart';
 import 'package:flutter/material.dart';
@@ -17,17 +18,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    fatechData();
-  }
 
   //dio로 api데이터요청하기
-  fatechData() async {
+  Future<List<StatModel>> fetchData() async {
     final statModels = await StatRepository.fetchData();
-
-    print(statModels);
+    return statModels;
   }
 
   @override
@@ -36,24 +31,46 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: primaryColor,
         drawer: MainDrawer(),
         body: Center(
-          child: CustomScrollView(
-            //스크롤뷰
-            slivers: [
-              MainAppBar(),
-              SliverToBoxAdapter(
-                //슬리버가 아닌 위젯도 넣을 수 있도록
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CategoryCard(),
-                    const SizedBox(
-                      height: 16,
+          child: FutureBuilder<List<StatModel>>(
+            future: fetchData(),
+            builder: (context, snapshot) {
+              if(snapshot.hasError){
+                return Center(
+                  child: Text("에러가 있습니다."),
+                );
+              }
+              if(!snapshot.hasData){
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              List<StatModel> stats = snapshot.data!; //통계데이터 받아오기.
+              StatModel recentStat= stats[0]; //리스트의 가장 앞에있는 데이터가 가장 최근 데이터임(날ㅅ짜)
+              final status = statusLevel.where((element) => element.minFineDust<recentStat.seoul,).last; //
+              return CustomScrollView(
+                //스크롤뷰
+                slivers: [
+                  MainAppBar(
+                    status: status,
+                    stat: recentStat,
+                  ),
+                  SliverToBoxAdapter(
+                    //슬리버가 아닌 위젯도 넣을 수 있도록
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CategoryCard(),
+                        const SizedBox(
+                          height: 16,
+                        ),
+                        HourlyCard()
+                      ],
                     ),
-                    HourlyCard()
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
+              );
+            }
           ),
         ));
   }
