@@ -8,6 +8,7 @@ import 'package:dusty_dust/const/data.dart';
 import 'package:dusty_dust/const/status_level.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/repository/stat_repository.dart';
+import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,7 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
               List<StatModel> stats = snapshot.data!; //통계데이터 받아오기.
               StatModel recentStat= stats[0]; //리스트의 가장 앞에있는 데이터가 가장 최근 데이터임(날ㅅ짜)
-              final status = statusLevel.where((element) => element.minFineDust<recentStat.seoul,).last; //
+              final status = DataUtils.getCurrentStatusFromStat(
+                  value: recentStat.seoul,
+                  itemCode: ItemCode.PM10
+              );
+
               return CustomScrollView(
                 //스크롤뷰
                 slivers: [
