@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:dusty_dust/const/colors.dart';
 import '../const/regions.dart';
 
 typedef OnRegionTap = void Function(String region);
 
 class MainDrawer extends StatelessWidget {
+  final Color darkColor;
+  final Color lightColor;
   final OnRegionTap onRegionTap;
   final String selectedRegion;
 
-  const MainDrawer({
-    required this.onRegionTap,
-    required this.selectedRegion,
-    Key? key}) : super(key: key);
+  const MainDrawer(
+      {required this.lightColor,
+      required this.darkColor,
+      required this.onRegionTap,
+      required this.selectedRegion,
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: dartColor,
+      backgroundColor: darkColor,
       child: ListView(
         children: [
           DrawerHeader(

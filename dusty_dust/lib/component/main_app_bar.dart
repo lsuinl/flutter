@@ -1,4 +1,3 @@
-import 'package:dusty_dust/const/colors.dart';
 import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/model/status_model.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
@@ -8,12 +7,16 @@ class MainAppBar extends StatelessWidget {
   final StatusModel status; // 가져온 스탯모델을 기준으로 단계를 나눠 만든 모델
   final StatModel stat; //실제 값 모델(요청해서 받아온 값)
   final String region;
+  final DateTime dateTime;
+  final bool isExpanded; //스크롤 모두 열림여부
 
-  const MainAppBar({
-    required this.status,
-    required this.stat,
-    required this.region,
-    Key? key})
+  const MainAppBar(
+      {required this.isExpanded,
+      required this.dateTime,
+      required this.status,
+      required this.stat,
+      required this.region,
+      Key? key})
       : super(key: key);
 
   @override
@@ -25,8 +28,17 @@ class MainAppBar extends StatelessWidget {
 
     return SliverAppBar(
       //앱바
+      pinned: true,
+      //앱바고정(스크롤에 영향받지 않음
+      title: isExpanded
+          ? null
+          : Text(
+              '${region} ${DataUtils.getTimeFromDateTime(dateTime: dateTime)}'),
+      centerTitle: true,
+      //안드로이드용 센터정렬
       backgroundColor: status.primaryColor,
-      expandedHeight: 500, //최대 늘어날 수 있는 값 설정
+      expandedHeight: 500,
+      //최대 늘어날 수 있는 값 설정
       flexibleSpace: FlexibleSpaceBar(
         //스크롤을 올리면 아이콘이 사라지는 공간
         background: SafeArea(
@@ -71,5 +83,4 @@ class MainAppBar extends StatelessWidget {
       ),
     );
   }
-
 }
