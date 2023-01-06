@@ -25,14 +25,26 @@ class _HomeScreenState extends State<HomeScreen> {
   //dio로 api데이터요청하기
   Future<Map<ItemCode, List<StatModel>>> fetchData() async {
     Map<ItemCode, List<StatModel>> stats={};
+    List<Future> futures = [];
 
-    for(ItemCode itemCode in ItemCode.values) { //데이터 하나씩 전부 불러와주기
-      final statModels = await StatRepository.fetchData(
+    for(ItemCode itemCode in ItemCode.values) { //데이터 하나씩 전부 불러와주기->await없기때문에 딜레이감소
+      futures.add(
+          StatRepository.fetchData(
           itemCode: itemCode
+      ),
       );
+      //final Future<List<StatModel>> response =  StatRepository.fetchData( //await 하면 future불가.
+      // final List<StatModel> response = await StatRepository.fetchData(
+    }
+
+    final results = await Future.wait(futures);
+
+    for(int i=0;i<results.length;i++) {
+      final key = ItemCode.values[i];
+      final value = results[i];
 
       stats.addAll({
-        itemCode: statModels,
+        key: value,
       });
     }
     return stats;
