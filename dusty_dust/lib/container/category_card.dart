@@ -1,22 +1,22 @@
+import 'package:dusty_dust/component/card_title.dart';
 import 'package:dusty_dust/component/main_card.dart';
 import 'package:dusty_dust/component/main_stat.dart';
 import 'package:dusty_dust/model/stat_and_status_model.dart';
+import 'package:dusty_dust/model/stat_model.dart';
 import 'package:dusty_dust/utils/data_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-import 'card_title.dart';
 
 class CategoryCard extends StatelessWidget {
   final String region;
   final Color darkColor;
   final Color lightColor;
-  final List<StatAndStatusModel> models;
 
   const CategoryCard(
       {required this.darkColor,
       required this.lightColor,
       required this.region,
-      required this.models,
       Key? key})
       : super(key: key);
 
@@ -40,29 +40,28 @@ class CategoryCard extends StatelessWidget {
                     //정렬
                     scrollDirection: Axis.horizontal, //스크롤 방향 설정
                     physics: PageScrollPhysics(), //페이지단위로 스크롤을 관리
-                    children: models
-                        .map(
-                          (model) => MainStat(
-                              category: DataUtils.getitemCodeKrString(
-                                  itemCode: model.itemCode),
-                              imgPath: model.status.imagePtth,
-                              level: model.status.label,
-                              stat: '${model.stat.getLevelFromRegion(
-                                region,
-                              )}${DataUtils.getUnitFromDataType(itemCode: model.itemCode)}',
-                              width: constraint.maxWidth / 3),
-                        )
+                    children: ItemCode.values
+                        .map((ItemCode itemCode) => ValueListenableBuilder<Box>(
+                            valueListenable:
+                                Hive.box<StatModel>(itemCode.name).listenable(),
+                            builder: (cotext, box, widget) {
+                              final stat = box.values.last as StatModel;
+                              final status =
+                                  DataUtils.getStatusFromItemCodeAndValue(
+                                      value: stat.getLevelFromRegion(region),
+                                      itemCode: itemCode);
+
+                              return MainStat(
+                                  category: DataUtils.getitemCodeKrString(
+                                      itemCode: itemCode),
+                                  imgPath: status.imagePtth,
+                                  level: status.label,
+                                  stat: '${stat.getLevelFromRegion(
+                                    region,
+                                  )}${DataUtils.getUnitFromDataType(itemCode: itemCode)}',
+                                  width: constraint.maxWidth / 3);
+                            }))
                         .toList(),
-                    //   List.generate(
-                    //   20,
-                    //   (index) => MainStat(
-                    //     category: "미세먼지$index",
-                    //     imgPath: "asset/img/best.png",
-                    //     level: "최고",
-                    //     stat: "0㎛",
-                    //     width: constraint.maxWidth / 3,
-                    //   ),
-                    // ),
                   ),
                 )
               ],
